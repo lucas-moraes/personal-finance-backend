@@ -1,0 +1,89 @@
+{
+    "user": {
+        "id": "e132f698-9656-4650-a7d2-5baea10ee1c5",
+        "aud": "authenticated",
+        "role": "authenticated",
+        "email": "lucas.moraes88@yahoo.com",
+        "email_confirmed_at": "2025-01-14T20:40:37.493009Z",
+        "phone": "",
+        "confirmed_at": "2025-01-14T20:40:37.493009Z",
+        "last_sign_in_at": "2025-01-15T17:27:43.90880813Z",
+        "app_metadata": {
+            "provider": "email",
+            "providers": [
+                "email"
+            ]
+        },
+        "user_metadata": {
+            "email_verified": true
+        },
+        "identities": [
+            {
+                "identity_id": "2431711c-64d7-43b1-9a5c-90444ab21d1b",
+                "id": "e132f698-9656-4650-a7d2-5baea10ee1c5",
+                "user_id": "e132f698-9656-4650-a7d2-5baea10ee1c5",
+                "identity_data": {
+                    "email": "lucas.moraes88@yahoo.com",
+                    "email_verified": false,
+                    "phone_verified": false,
+                    "sub": "e132f698-9656-4650-a7d2-5baea10ee1c5"
+                },
+                "provider": "email",
+                "last_sign_in_at": "2025-01-14T20:40:37.473341Z",
+                "created_at": "2025-01-14T20:40:37.473403Z",
+                "updated_at": "2025-01-14T20:40:37.473403Z",
+                "email": "lucas.moraes88@yahoo.com"
+            }
+        ],
+        "created_at": "2025-01-14T20:40:37.443885Z",
+        "updated_at": "2025-01-15T17:27:43.930183Z",
+        "is_anonymous": false
+    },
+    "session": {
+        "access_token": "eyJhbGciOiJIUzI1NiIsImtpZCI6IjM3S1hscGI5bUF5UVp2bnkiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL3VlZnp3ZmRwdXRmeHloZm12eHN1LnN1cGFiYXNlLmNvL2F1dGgvdjEiLCJzdWIiOiJlMTMyZjY5OC05NjU2LTQ2NTAtYTdkMi01YmFlYTEwZWUxYzUiLCJhdWQiOiJhdXRoZW50aWNhdGVkIiwiZXhwIjoxNzM2OTY1NjYzLCJpYXQiOjE3MzY5NjIwNjMsImVtYWlsIjoibHVjYXMubW9yYWVzODhAeWFob28uY29tIiwicGhvbmUiOiIiLCJhcHBfbWV0YWRhdGEiOnsicHJvdmlkZXIiOiJlbWFpbCIsInByb3ZpZGVycyI6WyJlbWFpbCJdfSwidXNlcl9tZXRhZGF0YSI6eyJlbWFpbF92ZXJpZmllZCI6dHJ1ZX0sInJvbGUiOiJhdXRoZW50aWNhdGVkIiwiYWFsIjoiYWFsMSIsImFtciI6W3sibWV0aG9kIjoicGFzc3dvcmQiLCJ0aW1lc3RhbXAiOjE3MzY5NjIwNjN9XSwic2Vzc2lvbl9pZCI6IjVmMGVmMTYzLTJiOTAtNGNhYi05ZDljLTg0MzhhNTFkZGQ2ZiIsImlzX2Fub255bW91cyI6ZmFsc2V9.gcZkcTh9TF6GJkQ-NW4AD9uN1yQui3E_-GYYKgI5cFI",
+        "token_type": "bearer",
+        "expires_in": 3600,
+        "expires_at": 1736965663,
+        "refresh_token": "xmdNLPc_APGHR2afiqhIYg",
+        "user": {
+            "id": "e132f698-9656-4650-a7d2-5baea10ee1c5",
+            "aud": "authenticated",
+            "role": "authenticated",
+            "email": "lucas.moraes88@yahoo.com",
+            "email_confirmed_at": "2025-01-14T20:40:37.493009Z",
+            "phone": "",
+            "confirmed_at": "2025-01-14T20:40:37.493009Z",
+            "last_sign_in_at": "2025-01-15T17:27:43.90880813Z",
+            "app_metadata": {
+                "provider": "email",
+                "providers": [
+                    "email"
+                ]
+            },
+            "user_metadata": {
+                "email_verified": true
+            },
+            "identities": [
+                {
+                    "identity_id": "2431711c-64d7-43b1-9a5c-90444ab21d1b",
+                    "id": "e132f698-9656-4650-a7d2-5baea10ee1c5",
+                    "user_id": "e132f698-9656-4650-a7d2-5baea10ee1c5",
+                    "identity_data": {
+                        "email": "lucas.moraes88@yahoo.com",
+                        "email_verified": false,
+                        "phone_verified": false,
+                        "sub": "e132f698-9656-4650-a7d2-5baea10ee1c5"
+                    },
+                    "provider": "email",
+                    "last_sign_in_at": "2025-01-14T20:40:37.473341Z",
+                    "created_at": "2025-01-14T20:40:37.473403Z",
+                    "updated_at": "2025-01-14T20:40:37.473403Z",
+                    "email": "lucas.moraes88@yahoo.com"
+                }
+            ],
+            "created_at": "2025-01-14T20:40:37.443885Z",
+            "updated_at": "2025-01-15T17:27:43.930183Z",
+            "is_anonymous": false
+        }
+    }
+}

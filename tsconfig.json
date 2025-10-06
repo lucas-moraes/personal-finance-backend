@@ -1,0 +1,21 @@
+{
+"compilerOptions": {
+  "target": "ESNext",
+  "module": "CommonJS",
+  "moduleResolution": "Node",
+  "esModuleInterop": true,
+  "experimentalDecorators": true,
+  "strict": true,
+  "skipLibCheck": true,
+  "forceConsistentCasingInFileNames": true,
+  "resolveJsonModule": true,
+  "types": ["node", "jest"],
+  "baseUrl": "./",
+  "rootDir": "./src",
+  "outDir": "./dist",
+  "jsx": "react-jsx",
+  "jsxImportSource": "hono/jsx"
+ },
+  "include": ["src/**/*"], 
+  "exclude": ["node_modules", "api"]
+}
