@@ -2,7 +2,7 @@
   "name": "finance",
   "version": "1.0.0",
   "scripts": {
-    "dev": "tsx watch src/server.ts",
+    "dev": "NODE_ENV=dev tsx watch src/server.ts",
     "debug": "NODE_OPTIONS='--enable-source-maps' TSX_SOURCEMAP=inline tsx watch --inspect=9229 src/server.ts",
     "build": "tsc",
     "start": "vercel dev",
