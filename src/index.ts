@@ -8,9 +8,7 @@ import { cors } from "hono/cors";
 
 const app = new Hono();
 app.use("*", cors());
-app.get("/", (c) => {
-  return c.json({ message: "hello" });
-});
+app.get("/", (c) => c.json({ message: "hello" }));
 app.route("/api", authRoutes);
 app.route("/api", movementRoutes);
 app.route("/api", categoryRoutes);
