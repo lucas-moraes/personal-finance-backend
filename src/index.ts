@@ -6,12 +6,12 @@ import { authRoutes } from "./presentation/routes/Auth.routes";
 import { HTTPException } from "hono/http-exception";
 import { cors } from "hono/cors";
 
-const app = new Hono();
-app.use("*", cors());
-app.get("/", (c) => c.json({ message: "hello" }));
-app.route("/api", authRoutes);
-app.route("/api", movementRoutes);
-app.route("/api", categoryRoutes);
+const app = new Hono().basePath("/api");
+app.use("/api/*", cors());
+app.get("/", (c) => c.json({ message: "hello!" }));
+app.route("/", authRoutes);
+app.route("/", movementRoutes);
+app.route("/", categoryRoutes);
 
 app.onError((err, c) => {
   if (err instanceof HTTPException) {
