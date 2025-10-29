@@ -1,9 +1,12 @@
 import { Hono } from "hono";
 import { MovementController } from "../controllers/Movement.controller";
 import { tokenValidation } from "../middleware/TokenValidation.middleware";
+import { cors } from "hono/cors";
 
-const router = new Hono();
 const movementController = new MovementController();
+const router = new Hono().basePath("/api");
+
+router.use("/api/*", cors());
 
 router.get("/movement/get-all", tokenValidation, (c) => {
   return movementController.getAllMovements(c);
