@@ -1,9 +1,12 @@
 import { Hono } from "hono";
 import { CategoryController } from "../controllers/Category.controller";
 import { tokenValidation } from "../middleware/TokenValidation.middleware";
+import { cors } from "hono/cors";
 
-const router = new Hono();
 const categoryController = new CategoryController();
+const router = new Hono().basePath("/api");
+
+router.use("/api/*", cors());
 
 router.get("/category/get-all", tokenValidation, async (c) => {
   return categoryController.getAllCategories(c);
