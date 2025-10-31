@@ -11,6 +11,6 @@ export const RESPONSE_MESSAGES = {
 export const CORS_OPTIONS = {
   origin: "*",
   methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
-  allowedHeaders: ["Content-Type", "Authorization"],
+  allowedHeaders: "*",
   credentials: true,
 };
