@@ -26,3 +26,17 @@ export const logOut = async (c: Context) => {
 
   return c.json({ message: "successfully logged out" });
 };
+
+export const loggedInUser = async (c: Context, next: Next) => {
+  const {
+    data: { user },
+    error,
+  } = await supabase.auth.getUser();
+
+  if (error || !user) {
+    throw new HTTPException(401, { message: RESPONSE_MESSAGES.AUTH.INVALID_TOKEN });
+  }
+
+  c.set("user", user);
+  await next();
+};
