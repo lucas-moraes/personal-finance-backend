@@ -4,7 +4,7 @@ import { validateAuthLogIn } from "../middleware/AuthValidation.middleware";
 
 const router = new Hono().basePath("/api");
 
-router.post("/auth/token", loggedInUser, async (c) => {
+router.get("/auth/token", loggedInUser, async (c) => {
   return c.json({ message: "token is valid" });
 });
 
