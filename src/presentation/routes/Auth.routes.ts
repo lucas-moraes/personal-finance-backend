@@ -1,11 +1,9 @@
 import { logIn, logOut } from "../auth/index.auth";
 import { Hono } from "hono";
-import { validateAuthLogIn } from "../middleware/AuthValidation.middleware";
 
 const router = new Hono().basePath("/api");
 
-router.post("/auth/login", async (c, next) => {
-  await validateAuthLogIn(c, next);
+router.post("/auth/login", async (c) => {
   return await logIn(c);
 });
 
