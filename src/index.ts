@@ -7,7 +7,7 @@ import { HTTPException } from "hono/http-exception";
 import { cors } from "hono/cors";
 
 const app = new Hono().basePath("/api");
-app.use("/api/*", cors());
+//app.use("/api/*", cors());
 app.get("/", (c) => c.json({ message: "hello!" }));
 app.route("/", authRoutes);
 app.route("/", movementRoutes);
