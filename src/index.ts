@@ -22,7 +22,7 @@ app.onError((err, c) => {
     const response = err.getResponse();
     return response;
   }
-  return c.json({ error: err.message || "Internal Server Error" }, 500);
+  return c.json({ error: err.message || "Internal Server Error" });
 });
 
 export default app;
