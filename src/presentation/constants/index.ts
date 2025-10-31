@@ -7,3 +7,10 @@ export const RESPONSE_MESSAGES = {
     INVALID_TOKEN: "Token inválido",
   },
 };
+
+export const CORS_OPTIONS = {
+  origin: "*",
+  methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+  credentials: true,
+};
