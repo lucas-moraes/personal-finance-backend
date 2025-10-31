@@ -1,8 +1,12 @@
-import { logIn, logOut } from "../auth/index.auth";
+import { loggedInUser, logIn, logOut } from "../auth/index.auth";
 import { Hono } from "hono";
 import { validateAuthLogIn } from "../middleware/AuthValidation.middleware";
 
 const router = new Hono().basePath("/api");
+
+router.post("/auth/token", loggedInUser, async (c) => {
+  return c.json({ message: "token is valid" });
+});
 
 router.post("/auth/login", validateAuthLogIn, async (c) => {
   return await logIn(c);
