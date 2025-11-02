@@ -1,4 +1,4 @@
-import { IMovementAdapter, TMovement } from "../../domain/interfaces/Movement.interface";
+import { IMovementAdapter, IMovementSummary, TMovement } from "../../domain/interfaces/Movement.interface";
 import { movements } from "../../domain/entities/Movement.entity";
 import { db } from "../database/DataSource";
 import { and, eq, SQL, sql } from "drizzle-orm";
@@ -43,7 +43,7 @@ export class MovementAdapter implements IMovementAdapter {
     });
   }
 
-  async findMovementsBy(args: Partial<TMovement>): Promise<Array<TMovement>> {
+  async findMovementsBy(args: Partial<TMovement>): Promise<IMovementSummary> {
     const filters: SQL[] = [];
     if (args.categoria) {
       filters.push(eq(movements.categoria, args.categoria));
@@ -55,14 +55,13 @@ export class MovementAdapter implements IMovementAdapter {
       filters.push(eq(movements.mes, args.mes));
     }
 
-    return await this.movementAdapter
+    const movementFiltered = await this.movementAdapter
       .select({
         id: movements.id,
         dia: movements.dia,
         mes: movements.mes,
         ano: movements.ano,
         tipo: movements.tipo,
-        categoria: movements.categoria,
         categoriaDescription: categories.descricao,
         descricao: movements.descricao,
         valor: movements.valor,
@@ -70,6 +69,16 @@ export class MovementAdapter implements IMovementAdapter {
       .from(movements)
       .leftJoin(categories, eq(movements.categoria, categories.id))
       .where(and(...filters));
+
+    const movementSummary = movementFiltered.reduce((acc: number, curr) => {
+      const summary = parseFloat(curr.valor);
+      return acc + summary;
+    }, 0);
+
+    return {
+      movemnet: movementFiltered,
+      total: movementSummary,
+    };
   }
 
   async createMovement(movement: TMovement): Promise<TMovement> {
