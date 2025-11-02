@@ -1,7 +1,7 @@
 import { IMovementAdapter, TMovement } from "../../domain/interfaces/Movement.interface";
 import { movements } from "../../domain/entities/Movement.entity";
 import { db } from "../database/DataSource";
-import { eq, sql } from "drizzle-orm";
+import { and, eq, SQL, sql } from "drizzle-orm";
 import { categories } from "../../domain/entities/Category.entity";
 
 export class MovementAdapter implements IMovementAdapter {
@@ -43,22 +43,16 @@ export class MovementAdapter implements IMovementAdapter {
     });
   }
 
-  async findMovementsBy(args: Record<string, string>): Promise<Array<TMovement>> {
-    const [key, value] = Object.entries(args).flat(1) as [string, string];
-
-    const columnMap: Record<string, any> = {
-      id: movements.id,
-      dia: movements.dia,
-      mes: movements.mes,
-      ano: movements.ano,
-      tipo: movements.tipo,
-      categoria: movements.categoria,
-      descricao: movements.descricao,
-      valor: movements.valor,
-    };
-
-    if (!columnMap[key]) {
-      throw new Error(`Invalid column key: ${key}`);
+  async findMovementsBy(args: Partial<TMovement>): Promise<Array<TMovement>> {
+    const filters: SQL[] = [];
+    if (args.categoria) {
+      filters.push(eq(movements.categoria, args.categoria));
+    }
+    if (args.ano) {
+      filters.push(eq(movements.ano, args.ano));
+    }
+    if (args.mes) {
+      filters.push(eq(movements.mes, args.mes));
     }
 
     return await this.movementAdapter
@@ -75,7 +69,7 @@ export class MovementAdapter implements IMovementAdapter {
       })
       .from(movements)
       .leftJoin(categories, eq(movements.categoria, categories.id))
-      .where(eq(columnMap[key], value));
+      .where(and(...filters));
   }
 
   async createMovement(movement: TMovement): Promise<TMovement> {
