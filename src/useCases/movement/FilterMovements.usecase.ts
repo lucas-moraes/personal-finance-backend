@@ -7,8 +7,7 @@ export class FilterMovements {
     this.movementRepository = movementRepository;
   }
 
-  async execute(args: Partial<IMovement>): Promise<Array<IMovementSummary>> {
-    const result = await this.movementRepository.findMovementsBy(args);
-    return Array.isArray(result) ? result : [result];
+  async execute(args: Partial<IMovement>): Promise<IMovementSummary> {
+    return await this.movementRepository.findMovementsBy(args);
   }
 }
