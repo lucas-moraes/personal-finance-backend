@@ -96,13 +96,19 @@ export class MovementAdapter implements IMovementAdapter {
       .leftJoin(categories, eq(movements.categoria, categories.id))
       .where(and(...filters));
 
-    const movementSanitized = movementFiltered.map((_m) => {
-      const { categoria, categoriaDescription, ...rest } = _m;
+    const movementSanitized = movementFiltered.map((movement) => {
+      const { categoria, categoriaDescription, ...rest } = movement;
       return {
         ...rest,
         categoriaDescricao: categoriaDescription || "",
-        valor: parseFloat(_m.valor),
+        valor: parseFloat(movement.valor),
       };
+    });
+
+    movementSanitized.sort((a, b) => {
+      if (a.valor < b.valor) return 1;
+      if (a.valor > b.valor) return -1;
+      return 0;
     });
 
     const movementSummary = movementFiltered.reduce((acc: number, curr) => {
@@ -119,24 +125,24 @@ export class MovementAdapter implements IMovementAdapter {
   async createMovement(movement: Omit<IMovement, "id">): Promise<IMovement> {
     const movementToInsert = {
       ...movement,
-      valor: movement.valor.toString()
+      valor: movement.valor.toString(),
     };
     const res = await this.movementAdapter.insert(movements).values(movementToInsert).returning();
     return {
       ...res[0],
-      valor: parseFloat(res[0].valor)
+      valor: parseFloat(res[0].valor),
     };
   }
 
   async createMultipleMovements(movement: Array<Omit<IMovement, "id">>): Promise<Array<IMovement>> {
-    const movementsToInsert = movement.map(m => ({
+    const movementsToInsert = movement.map((m) => ({
       ...m,
-      valor: m.valor.toString()
+      valor: m.valor.toString(),
     }));
     const res = await this.movementAdapter.insert(movements).values(movementsToInsert).returning();
-    return res.map(r => ({
+    return res.map((r) => ({
       ...r,
-      valor: parseFloat(r.valor)
+      valor: parseFloat(r.valor),
     }));
   }
 
@@ -148,7 +154,7 @@ export class MovementAdapter implements IMovementAdapter {
     const { valor, ...rest } = movementUpdated;
     const movementToUpdate = {
       ...rest,
-      ...(valor !== undefined && { valor: valor.toString() })
+      ...(valor !== undefined && { valor: valor.toString() }),
     };
     await this.movementAdapter.update(movements).set(movementToUpdate).where(eq(movements.id, id));
   }
