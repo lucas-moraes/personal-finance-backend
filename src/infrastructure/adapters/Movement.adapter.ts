@@ -1,4 +1,9 @@
-import { IMovementAdapter, IMovementSummary, TMovement } from "../../domain/interfaces/Movement.interface";
+import {
+  IMovementAdapter,
+  IMovementConsult,
+  IMovementSummary,
+  IMovement,
+} from "../../domain/interfaces/Movement.interface";
 import { movements } from "../../domain/entities/Movement.entity";
 import { db } from "../database/DataSource";
 import { and, eq, SQL, sql } from "drizzle-orm";
@@ -35,15 +40,35 @@ export class MovementAdapter implements IMovementAdapter {
       .groupBy(movements.mes);
   }
 
-  async findAllMovements(): Promise<Array<TMovement>> {
-    return await this.movementAdapter.query.movements.findMany({
-      with: {
-        category: true,
-      },
+  async findAllMovements(): Promise<Array<IMovementConsult>> {
+    const movement = await this.movementAdapter
+      .select({
+        id: movements.id,
+        dia: movements.dia,
+        mes: movements.mes,
+        ano: movements.ano,
+        tipo: movements.tipo,
+        categoria: movements.categoria,
+        categoriaDescricao: categories.descricao,
+        descricao: movements.descricao,
+        valor: movements.valor,
+      })
+      .from(movements)
+      .leftJoin(categories, eq(movements.categoria, categories.id));
+
+    const movementSanitized = movement.map((_m) => {
+      const { categoria, ...rest } = _m;
+      return {
+        ...rest,
+        categoriaDescricao: rest.categoriaDescricao || "",
+        valor: parseFloat(_m.valor),
+      };
     });
+
+    return movementSanitized;
   }
 
-  async findMovementsBy(args: Partial<TMovement>): Promise<IMovementSummary> {
+  async findMovementsBy(args: Partial<IMovement>): Promise<IMovementSummary> {
     const filters: SQL[] = [];
     if (args.categoria as number) {
       filters.push(eq(movements.categoria, args.categoria as number));
@@ -55,7 +80,7 @@ export class MovementAdapter implements IMovementAdapter {
       filters.push(eq(movements.mes, args.mes));
     }
 
-    const movementFiltered: Array<TMovement> = await this.movementAdapter
+    const movementFiltered = await this.movementAdapter
       .select({
         id: movements.id,
         dia: movements.dia,
@@ -72,10 +97,10 @@ export class MovementAdapter implements IMovementAdapter {
       .where(and(...filters));
 
     const movementSanitized = movementFiltered.map((_m) => {
-      const { categoria, ...rest } = _m;
+      const { categoria, categoriaDescription, ...rest } = _m;
       return {
         ...rest,
-        id: Number(_m.id),
+        categoriaDescricao: categoriaDescription || "",
         valor: parseFloat(_m.valor),
       };
     });
@@ -86,25 +111,45 @@ export class MovementAdapter implements IMovementAdapter {
     }, 0);
 
     return {
-      movement: movementSanitized,
+      movements: movementSanitized,
       total: movementSummary,
     };
   }
 
-  async createMovement(data: TMovement): Promise<TMovement> {
-    const res = await this.movementAdapter.insert(movements).values(data).returning();
-    return res[0];
+  async createMovement(movement: Omit<IMovement, "id">): Promise<IMovement> {
+    const movementToInsert = {
+      ...movement,
+      valor: movement.valor.toString()
+    };
+    const res = await this.movementAdapter.insert(movements).values(movementToInsert).returning();
+    return {
+      ...res[0],
+      valor: parseFloat(res[0].valor)
+    };
   }
 
-  async createMultipleMovements(movement: Array<TMovement>): Promise<Array<TMovement>> {
-    return await this.movementAdapter.insert(movements).values(movement).returning();
+  async createMultipleMovements(movement: Array<Omit<IMovement, "id">>): Promise<Array<IMovement>> {
+    const movementsToInsert = movement.map(m => ({
+      ...m,
+      valor: m.valor.toString()
+    }));
+    const res = await this.movementAdapter.insert(movements).values(movementsToInsert).returning();
+    return res.map(r => ({
+      ...r,
+      valor: parseFloat(r.valor)
+    }));
   }
 
   async deleteMovementById(id: number): Promise<void> {
     await this.movementAdapter.delete(movements).where(eq(movements.id, id));
   }
 
-  async updateMovementById(id: number, movementUpdated: Partial<TMovement>): Promise<void> {
-    await this.movementAdapter.update(movements).set(movementUpdated).where(eq(movements.id, id));
+  async updateMovementById(id: number, movementUpdated: Partial<IMovement>): Promise<void> {
+    const { valor, ...rest } = movementUpdated;
+    const movementToUpdate = {
+      ...rest,
+      ...(valor !== undefined && { valor: valor.toString() })
+    };
+    await this.movementAdapter.update(movements).set(movementToUpdate).where(eq(movements.id, id));
   }
 }

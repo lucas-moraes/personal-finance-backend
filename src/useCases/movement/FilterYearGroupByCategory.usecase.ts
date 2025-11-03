@@ -1,4 +1,4 @@
-import type { IMovementAdapter, TMovement } from "../../domain/interfaces/Movement.interface";
+import type { IMovementAdapter } from "../../domain/interfaces/Movement.interface";
 
 export class FilterYearGroupByCategory {
   private movementAdapter: IMovementAdapter;

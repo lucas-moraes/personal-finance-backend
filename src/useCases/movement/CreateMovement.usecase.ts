@@ -1,4 +1,4 @@
-import type { IMovementAdapter, TMovement } from "../../domain/interfaces/Movement.interface";
+import type { IMovementAdapter, IMovement } from "../../domain/interfaces/Movement.interface";
 
 export class CreateMovement {
   private movementAdapter: IMovementAdapter;
@@ -7,7 +7,7 @@ export class CreateMovement {
     this.movementAdapter = movementAdapter;
   }
 
-  async execute(newMovement: TMovement | TMovement[]): Promise<TMovement> {
-    return this.movementAdapter.createMovement(newMovement!);
+  async execute(newMovement: IMovement | Array<IMovement>): Promise<IMovement> {
+    return this.movementAdapter.createMovement(newMovement as IMovement);
   }
 }

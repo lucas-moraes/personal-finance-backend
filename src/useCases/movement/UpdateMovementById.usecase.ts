@@ -1,4 +1,4 @@
-import type { IMovementAdapter, TMovement } from "../../domain/interfaces/Movement.interface";
+import type { IMovementAdapter, IMovement } from "../../domain/interfaces/Movement.interface";
 
 export class UpdateMovementById {
   private movementAdapter: IMovementAdapter;
@@ -7,7 +7,7 @@ export class UpdateMovementById {
     this.movementAdapter = movementAdapter;
   }
 
-  async execute(id: number, movementUpdated: Partial<TMovement>): Promise<void> {
+  async execute(id: number, movementUpdated: Partial<IMovement>): Promise<void> {
     return this.movementAdapter.updateMovementById(id, movementUpdated);
   }
 }

@@ -1,4 +1,4 @@
-import type { IMovementAdapter, TMovement } from "../../domain/interfaces/Movement.interface";
+import type { IMovementAdapter, IMovement, IMovementSummary } from "../../domain/interfaces/Movement.interface";
 
 export class FilterMovements {
   private movementRepository: IMovementAdapter;
@@ -7,7 +7,8 @@ export class FilterMovements {
     this.movementRepository = movementRepository;
   }
 
-  async execute(args: Partial<TMovement>): Promise<Array<TMovement>> {
-    return this.movementRepository.findMovementsBy(args);
+  async execute(args: Partial<IMovement>): Promise<Array<IMovementSummary>> {
+    const result = await this.movementRepository.findMovementsBy(args);
+    return Array.isArray(result) ? result : [result];
   }
 }
