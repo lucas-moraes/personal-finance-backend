@@ -1,4 +1,4 @@
-import type { IMovementAdapter, TMovement } from "../../domain/interfaces/Movement.interface";
+import type { IMovementAdapter, IMovement, IMovementConsult } from "../../domain/interfaces/Movement.interface";
 
 export class GetAllMovements {
   private MovementAdapter: IMovementAdapter;
@@ -7,7 +7,7 @@ export class GetAllMovements {
     this.MovementAdapter = movementAdapter;
   }
 
-  async execute(): Promise<Array<TMovement>> {
+  async execute(): Promise<Array<IMovementConsult>> {
     return this.MovementAdapter.findAllMovements();
   }
 }

@@ -1,31 +1,29 @@
-export type TMovement = {
+export interface IMovement {
   id: number;
   dia: number;
   mes: number;
   ano: number;
   tipo: string;
   categoria: number;
-  categoriaDescription?: string | null;
   descricao: string | null;
-  valor: string;
-};
-
-export type TInvoice = Omit<TMovement, "id" | "categoria" | "valor"> & {
-  id: number;
   valor: number;
-};
+}
 
 export interface IMovementSummary {
-  movement: Array<TInvoice>;
+  movements: Array<Omit<IMovement, "categoria"> & { categoriaDescricao: string }>;
   total: number;
+}
+
+export interface IMovementConsult extends Omit<IMovement, "categoria"> {
+  categoriaDescricao: string;
 }
 
 export interface IMovementAdapter {
   filterMovementGroupByCategory(year: number): Promise<Array<{ categoria: number; total_valor: number }>>;
   filterMovementGroupByMonth(year: number): Promise<Array<{ mes: number; total_valor: number }>>;
-  findAllMovements(): Promise<Array<TMovement>>;
-  findMovementsBy(args: Partial<TMovement>): Promise<IMovementSummary>;
-  createMovement(movement: TMovement): Promise<TMovement>;
+  findAllMovements(): Promise<Array<IMovementConsult>>;
+  findMovementsBy(args: Partial<IMovement>): Promise<IMovementSummary>;
+  createMovement(movement: IMovement): Promise<IMovement>;
   deleteMovementById(id: number): Promise<void>;
-  updateMovementById(id: number, movementUpdated: Partial<TMovement>): Promise<void>;
+  updateMovementById(id: number, movementUpdated: Partial<IMovement>): Promise<void>;
 }

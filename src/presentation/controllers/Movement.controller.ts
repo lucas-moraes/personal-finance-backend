@@ -9,7 +9,7 @@ import { DeleteMovementById } from "../../useCases/movement/DeleteMovementById.u
 import { UpdateMovementById } from "../../useCases/movement/UpdateMovementById.usecase";
 import type { Context } from "hono";
 import { HTTPException } from "hono/http-exception";
-import { TMovement } from "../../domain/interfaces/Movement.interface";
+import { IMovement } from "../../domain/interfaces/Movement.interface";
 
 export class MovementController {
   private getAllMovementsUseCase: GetAllMovements;
@@ -107,7 +107,7 @@ export class MovementController {
 
   async createMovement(c: Context) {
     try {
-      const movementProps = c.req.json() as unknown as TMovement | TMovement[];
+      const movementProps = c.req.json() as unknown as IMovement | Array<IMovement>;
 
       const movement = await this.createMovementsUseCase.execute(movementProps);
       return c.json(movement);
@@ -118,7 +118,7 @@ export class MovementController {
 
   async createMultipleMovements(c: Context) {
     try {
-      const movementProps = c.req.json() as unknown as TMovement | TMovement[];
+      const movementProps = c.req.json() as unknown as IMovement | Array<IMovement>;
 
       const movement = await this.createMovementsUseCase.execute(movementProps);
       return c.json(movement);
@@ -145,7 +145,7 @@ export class MovementController {
   async updateMovementById(c: Context) {
     try {
       const { id } = c.req.param();
-      const movementProps = c.req.json() as unknown as Partial<TMovement>;
+      const movementProps = c.req.json() as unknown as Partial<IMovement>;
 
       await this.updateMovementsUseCase.execute(Number(id), movementProps);
       return c.status(204);
