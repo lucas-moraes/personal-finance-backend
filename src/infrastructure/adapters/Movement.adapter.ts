@@ -45,8 +45,8 @@ export class MovementAdapter implements IMovementAdapter {
 
   async findMovementsBy(args: Partial<TMovement>): Promise<IMovementSummary> {
     const filters: SQL[] = [];
-    if (args.categoria) {
-      filters.push(eq(movements.categoria, args.categoria));
+    if (args.categoria as number) {
+      filters.push(eq(movements.categoria, args.categoria as number));
     }
     if (args.ano) {
       filters.push(eq(movements.ano, args.ano));
@@ -55,13 +55,14 @@ export class MovementAdapter implements IMovementAdapter {
       filters.push(eq(movements.mes, args.mes));
     }
 
-    const movementFiltered = await this.movementAdapter
+    const movementFiltered: Array<TMovement> = await this.movementAdapter
       .select({
         id: movements.id,
         dia: movements.dia,
         mes: movements.mes,
         ano: movements.ano,
         tipo: movements.tipo,
+        categoria: movements.categoria,
         categoriaDescription: categories.descricao,
         descricao: movements.descricao,
         valor: movements.valor,
@@ -70,19 +71,27 @@ export class MovementAdapter implements IMovementAdapter {
       .leftJoin(categories, eq(movements.categoria, categories.id))
       .where(and(...filters));
 
+    const movementSanitized = movementFiltered.map((_m) => {
+      const { categoria, ...rest } = _m;
+      return {
+        ...rest,
+        valor: parseFloat(_m.valor!).toFixed(2),
+      };
+    });
+
     const movementSummary = movementFiltered.reduce((acc: number, curr) => {
-      const summary = parseFloat(curr.valor);
+      const summary = parseFloat(curr.valor!);
       return acc + summary;
     }, 0);
 
     return {
-      movemnet: movementFiltered,
+      movement: movementSanitized,
       total: movementSummary,
     };
   }
 
-  async createMovement(movement: TMovement): Promise<TMovement> {
-    const res = await this.movementAdapter.insert(movements).values(movement).returning();
+  async createMovement(data: TMovement): Promise<TMovement> {
+    const res = await this.movementAdapter.insert(movements).values(data).returning();
     return res[0];
   }
 
