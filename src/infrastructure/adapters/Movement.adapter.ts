@@ -75,7 +75,8 @@ export class MovementAdapter implements IMovementAdapter {
       const { categoria, ...rest } = _m;
       return {
         ...rest,
-        valor: parseFloat(_m.valor!).toFixed(2),
+        id: Number(_m.id),
+        valor: parseFloat(_m.valor),
       };
     });
 
