@@ -10,8 +10,13 @@ export type TMovement = {
   valor: string;
 };
 
+export type TInvoice = Omit<TMovement, "id" | "categoria" | "valor"> & {
+  id: number;
+  valor: number;
+};
+
 export interface IMovementSummary {
-  movement: Omit<TMovement, "categoria">[];
+  movement: Array<TInvoice>;
   total: number;
 }
 
