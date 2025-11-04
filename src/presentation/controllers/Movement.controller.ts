@@ -10,6 +10,8 @@ import { UpdateMovementById } from "../../useCases/movement/UpdateMovementById.u
 import type { Context } from "hono";
 import { HTTPException } from "hono/http-exception";
 import { IMovement } from "../../domain/interfaces/Movement.interface";
+import { GetMonthsWithMovements } from "src/useCases/movement/GetMonthsWithMovements.usecase";
+import { GetYearsWithMovements } from "src/useCases/movement/GetYearsWithMovements.usecase";
 
 export class MovementController {
   private getAllMovementsUseCase: GetAllMovements;
@@ -19,6 +21,8 @@ export class MovementController {
   private createMovementsUseCase: CreateMovement;
   private deleteMovementByIdUseCase: DeleteMovementById;
   private updateMovementsUseCase: UpdateMovementById;
+  private getMonthsWithMovementsUseCase: GetMonthsWithMovements;
+  private getYearsWithMovementsUseCase: GetYearsWithMovements;
 
   constructor() {
     const movementAdapter = new MovementAdapter();
@@ -29,6 +33,26 @@ export class MovementController {
     this.createMovementsUseCase = new CreateMovement(movementAdapter);
     this.deleteMovementByIdUseCase = new DeleteMovementById(movementAdapter);
     this.updateMovementsUseCase = new UpdateMovementById(movementAdapter);
+    this.getMonthsWithMovementsUseCase = new GetMonthsWithMovements(movementAdapter);
+    this.getYearsWithMovementsUseCase = new GetYearsWithMovements(movementAdapter);
+  }
+
+  async getYearsWithMovements(c: Context) {
+    try {
+      const years = await this.getYearsWithMovementsUseCase.execute();
+      return c.json(years);
+    } catch (error) {
+      return c.json({ message: (error as Error).message }, 500);
+    }
+  }
+
+  async getMonthsWithMovements(c: Context) {
+    try {
+      const months = await this.getMonthsWithMovementsUseCase.execute();
+      return c.json(months);
+    } catch (error) {
+      return c.json({ message: (error as Error).message }, 500);
+    }
   }
 
   async getAllMovements(c: Context) {
