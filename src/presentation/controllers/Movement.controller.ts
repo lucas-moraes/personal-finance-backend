@@ -10,8 +10,8 @@ import { UpdateMovementById } from "../../useCases/movement/UpdateMovementById.u
 import type { Context } from "hono";
 import { HTTPException } from "hono/http-exception";
 import { IMovement } from "../../domain/interfaces/Movement.interface";
-import { GetMonthsWithMovements } from "src/useCases/movement/GetMonthsWithMovements.usecase";
-import { GetYearsWithMovements } from "src/useCases/movement/GetYearsWithMovements.usecase";
+import { GetMonthsWithMovements } from "../../useCases/movement/GetMonthsWithMovements.usecase";
+import { GetYearsWithMovements } from "../../useCases/movement/GetYearsWithMovements.usecase";
 
 export class MovementController {
   private getAllMovementsUseCase: GetAllMovements;
