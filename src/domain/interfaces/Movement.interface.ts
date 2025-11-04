@@ -18,7 +18,19 @@ export interface IMovementConsult extends Omit<IMovement, "categoria"> {
   categoriaDescricao: string;
 }
 
+export interface IMovementMonths {
+  id: number;
+  mes: string;
+}
+
+export interface IMovementYears {
+  id: number;
+  ano: number;
+}
+
 export interface IMovementAdapter {
+  monthsWithMovements(): Promise<Array<IMovementMonths>>;
+  yearsWithMovements(): Promise<Array<IMovementYears>>;
   filterMovementGroupByCategory(year: number): Promise<Array<{ categoria: number; total_valor: number }>>;
   filterMovementGroupByMonth(year: number): Promise<Array<{ mes: number; total_valor: number }>>;
   findAllMovements(): Promise<Array<IMovementConsult>>;

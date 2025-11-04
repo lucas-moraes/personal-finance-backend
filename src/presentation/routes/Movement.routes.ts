@@ -16,7 +16,7 @@ router.get("/movement/filter", tokenValidation, (c) => {
   return movementController.filterMovements(c);
 });
 
-router.get("/movement/:id", tokenValidation, (c) => {
+router.get("/movement/get-by-id/:id", tokenValidation, (c) => {
   return movementController.getMovementById(c);
 });
 
@@ -26,6 +26,14 @@ router.get("/movement/filter-year-group-by-month/:year", tokenValidation, (c) =>
 
 router.get("/movement/filter-year-group-by-category/:year", tokenValidation, (c) => {
   return movementController.getMovementsByYearGroupByCategory(c);
+});
+
+router.get("/movement/months", tokenValidation, (c) => {
+  return movementController.getMonthsWithMovements(c);
+});
+
+router.get("/movement/years", tokenValidation, (c) => {
+  return movementController.getYearsWithMovements(c);
 });
 
 router.post("/movement/create", tokenValidation, (c) => {

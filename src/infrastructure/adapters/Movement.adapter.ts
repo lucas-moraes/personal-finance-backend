@@ -3,17 +3,54 @@ import {
   IMovementConsult,
   IMovementSummary,
   IMovement,
+  IMovementMonths,
+  IMovementYears,
 } from "../../domain/interfaces/Movement.interface";
 import { movements } from "../../domain/entities/Movement.entity";
 import { db } from "../database/DataSource";
 import { and, eq, SQL, sql } from "drizzle-orm";
 import { categories } from "../../domain/entities/Category.entity";
+import { monthDict } from "../utils/month-dict";
 
 export class MovementAdapter implements IMovementAdapter {
   private movementAdapter: typeof db;
 
   constructor() {
     this.movementAdapter = db;
+  }
+
+  async yearsWithMovements(): Promise<Array<IMovementYears>> {
+    const resp = await this.movementAdapter
+      .select({
+        ano: movements.ano,
+      })
+      .from(movements)
+      .groupBy(movements.ano)
+      .orderBy(movements.ano);
+
+    const years: IMovementYears[] = resp.map((_m) => ({
+      id: _m.ano!,
+      ano: _m.ano!,
+    }));
+
+    return years;
+  }
+
+  async monthsWithMovements(): Promise<Array<IMovementMonths>> {
+    const resp = await this.movementAdapter
+      .select({
+        mes: movements.mes,
+      })
+      .from(movements)
+      .groupBy(movements.mes)
+      .orderBy(movements.mes);
+
+    const months: IMovementMonths[] = resp.map((_m) => ({
+      id: _m.mes!,
+      mes: monthDict[_m.mes!],
+    }));
+
+    return months;
   }
 
   async filterMovementGroupByCategory(year: number): Promise<Array<{ categoria: number; total_valor: number }>> {
