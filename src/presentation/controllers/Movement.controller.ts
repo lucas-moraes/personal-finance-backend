@@ -12,7 +12,7 @@ import { HTTPException } from "hono/http-exception";
 import { IMovement } from "../../domain/interfaces/Movement.interface";
 import { GetMonthsWithMovements } from "../../useCases/movement/GetMonthsWithMovements.usecase";
 import { GetYearsWithMovements } from "../../useCases/movement/GetYearsWithMovements.usecase";
-import { FilterMovementById } from "src/useCases/movement/FilterMovementById.usecase";
+import { FilterMovementById } from "../../useCases/movement/FilterMovementById.usecase";
 
 export class MovementController {
   private getAllMovementsUseCase: GetAllMovements;
