@@ -38,4 +38,5 @@ export interface IMovementAdapter {
   createMovement(movement: IMovement): Promise<IMovement>;
   deleteMovementById(id: number): Promise<void>;
   updateMovementById(id: number, movementUpdated: Partial<IMovement>): Promise<void>;
+  findMovementById({ id }: { id: string }): Promise<Array<IMovement> | null>;
 }
