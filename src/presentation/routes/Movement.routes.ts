@@ -17,7 +17,7 @@ router.get("/movement/filter", tokenValidation, (c) => {
 });
 
 router.get("/movement/get-by-id/:id", tokenValidation, (c) => {
-  return movementController.getMovementById(c);
+  return movementController.filterMovementById(c);
 });
 
 router.get("/movement/filter-year-group-by-month/:year", tokenValidation, (c) => {

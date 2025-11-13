@@ -105,6 +105,28 @@ export class MovementAdapter implements IMovementAdapter {
     return movementSanitized;
   }
 
+  async findMovementById({ id }: { id: string }): Promise<Array<IMovement> | null> {
+    const movement = await this.movementAdapter
+      .select({
+        id: movements.id,
+        dia: movements.dia,
+        mes: movements.mes,
+        ano: movements.ano,
+        tipo: movements.tipo,
+        categoria: movements.categoria,
+        descricao: movements.descricao,
+        valor: movements.valor,
+      })
+      .from(movements)
+      .where(eq(movements.id, Number(id)))
+      .limit(1);
+
+    return movement.map(m => ({
+      ...m,
+      valor: parseFloat(m.valor)
+    }));
+  }
+
   async findMovementsBy(args: Partial<IMovement>): Promise<IMovementSummary> {
     const filters: SQL[] = [];
     if (args.categoria as number) {

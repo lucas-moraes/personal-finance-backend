@@ -1,4 +1,4 @@
-import { MovementAdapter } from "./../../infrastructure/adapters/Movement.adapter";
+import { MovementAdapter } from "../../infrastructure/adapters/Movement.adapter";
 import { GetAllMovements } from "../../useCases/movement/GetAllMovements.usecase";
 import { FilterMovements } from "../../useCases/movement/FilterMovements.usecase";
 import { RESPONSE_MESSAGES } from "../constants";
@@ -12,6 +12,7 @@ import { HTTPException } from "hono/http-exception";
 import { IMovement } from "../../domain/interfaces/Movement.interface";
 import { GetMonthsWithMovements } from "../../useCases/movement/GetMonthsWithMovements.usecase";
 import { GetYearsWithMovements } from "../../useCases/movement/GetYearsWithMovements.usecase";
+import { FilterMovementById } from "src/useCases/movement/FilterMovementById.usecase";
 
 export class MovementController {
   private getAllMovementsUseCase: GetAllMovements;
@@ -23,6 +24,7 @@ export class MovementController {
   private updateMovementsUseCase: UpdateMovementById;
   private getMonthsWithMovementsUseCase: GetMonthsWithMovements;
   private getYearsWithMovementsUseCase: GetYearsWithMovements;
+  private filterMovementByIdUseCase: FilterMovementById;
 
   constructor() {
     const movementAdapter = new MovementAdapter();
@@ -35,6 +37,7 @@ export class MovementController {
     this.updateMovementsUseCase = new UpdateMovementById(movementAdapter);
     this.getMonthsWithMovementsUseCase = new GetMonthsWithMovements(movementAdapter);
     this.getYearsWithMovementsUseCase = new GetYearsWithMovements(movementAdapter);
+    this.filterMovementByIdUseCase = new FilterMovementById(movementAdapter);
   }
 
   async getYearsWithMovements(c: Context) {
@@ -84,7 +87,7 @@ export class MovementController {
     }
   }
 
-  async getMovementById(c: Context) {
+  async filterMovementById(c: Context) {
     try {
       const { id } = c.req.param();
 
@@ -92,7 +95,7 @@ export class MovementController {
         throw new HTTPException(400, { message: RESPONSE_MESSAGES.MOVEMENT.PARAMETERS_IS_EMPTY });
       }
 
-      const movement = await this.filterMovementsUseCase.execute({ id: Number(id) });
+      const movement = await this.filterMovementByIdUseCase.execute({ id });
       return c.json(movement);
     } catch (error) {
       return c.json({ message: (error as Error).message }, (error as HTTPException).status || 500);
@@ -131,7 +134,7 @@ export class MovementController {
 
   async createMovement(c: Context) {
     try {
-      const movementProps = c.req.json() as unknown as IMovement | Array<IMovement>;
+      const movementProps = (await c.req.json()) as unknown as IMovement | Array<IMovement>;
 
       const movement = await this.createMovementsUseCase.execute(movementProps);
       return c.json(movement);
@@ -142,7 +145,7 @@ export class MovementController {
 
   async createMultipleMovements(c: Context) {
     try {
-      const movementProps = c.req.json() as unknown as IMovement | Array<IMovement>;
+      const movementProps = (await c.req.json()) as unknown as IMovement | Array<IMovement>;
 
       const movement = await this.createMovementsUseCase.execute(movementProps);
       return c.json(movement);
@@ -169,7 +172,7 @@ export class MovementController {
   async updateMovementById(c: Context) {
     try {
       const { id } = c.req.param();
-      const movementProps = c.req.json() as unknown as Partial<IMovement>;
+      const movementProps = (await c.req.json()) as unknown as Partial<IMovement>;
 
       await this.updateMovementsUseCase.execute(Number(id), movementProps);
       return c.status(204);
