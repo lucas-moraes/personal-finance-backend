@@ -163,7 +163,7 @@ export class MovementController {
       }
 
       await this.deleteMovementByIdUseCase.execute(Number(id));
-      return c.status(204);
+      return c.status(200);
     } catch (error) {
       return c.json({ message: (error as Error).message }, (error as HTTPException).status || 500);
     }
@@ -175,7 +175,7 @@ export class MovementController {
       const movementProps = (await c.req.json()) as unknown as Partial<IMovement>;
 
       await this.updateMovementsUseCase.execute(Number(id), movementProps);
-      return c.status(204);
+      return c.status(200);
     } catch (error) {
       return c.json({ message: (error as Error).message }, (error as HTTPException).status || 500);
     }
