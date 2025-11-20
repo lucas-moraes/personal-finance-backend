@@ -1,56 +1,68 @@
-import { Category } from "../../src/domain/entities/Category.entity";
 import { CategoryAdapter } from "../../src/infrastructure/adapters/Category.adapter";
-import { AppDataSource } from "../../src/infrastructure/database/DataSource";
-import { Repository, SelectQueryBuilder } from "typeorm";
+import type { TCategory } from "../../src/domain/interfaces/Category.interface";
 
 jest.mock("../../src/infrastructure/database/DataSource", () => ({
-  AppDataSource: {
-    getRepository: jest.fn(),
+  db: {
+    select: jest.fn().mockReturnThis(),
+    from: jest.fn().mockReturnThis(),
+    insert: jest.fn().mockReturnThis(),
+    values: jest.fn().mockReturnThis(),
+    returning: jest.fn(),
   },
 }));
 
 describe("CategoryAdapter", () => {
   let categoryAdapter: CategoryAdapter;
-  let repositoryMock: jest.Mocked<Repository<Category>>;
+  let mockDb: any;
 
   beforeEach(() => {
-    repositoryMock = {
-      find: jest.fn(),
-      save: jest.fn(),
-      createQueryBuilder: jest.fn(),
-    } as unknown as jest.Mocked<Repository<Category>>;
-    (AppDataSource.getRepository as jest.Mock).mockReturnValue(repositoryMock);
-
+    jest.clearAllMocks();
+    const { db } = require("../../src/infrastructure/database/DataSource");
+    mockDb = db;
     categoryAdapter = new CategoryAdapter();
   });
 
-  it("should return a query builder instance", () => {
-    const queryBuilderMock = {} as SelectQueryBuilder<Category>;
-    repositoryMock.createQueryBuilder.mockReturnValue(queryBuilderMock);
+  describe("Happy Path", () => {
+    it("should find all categories successfully", async () => {
+      const mockCategories: TCategory[] = [
+        { id: 1, descricao: "Alimentação" },
+        { id: 2, descricao: "Transporte" },
+      ];
+      mockDb.from.mockResolvedValue(mockCategories);
 
-    const result = categoryAdapter.customQueryForCategories();
+      const result = await categoryAdapter.findAllCategories();
 
-    expect(repositoryMock.createQueryBuilder).toHaveBeenCalledWith("category");
-    expect(result).toBe(queryBuilderMock);
+      expect(mockDb.select).toHaveBeenCalled();
+      expect(result).toEqual(mockCategories);
+    });
+
+    it("should create a category successfully", async () => {
+      const mockCategory: TCategory = { id: 2, descricao: "Transporte" };
+      mockDb.returning.mockResolvedValue([mockCategory]);
+
+      const result = await categoryAdapter.createCategory("Transporte");
+
+      expect(mockDb.insert).toHaveBeenCalled();
+      expect(mockDb.values).toHaveBeenCalledWith({ descricao: "Transporte" });
+      expect(result).toEqual(mockCategory);
+    });
   });
 
-  it("should find all categories", async () => {
-    const mockCategories = [{ id: 1, descricao: "Alimentação" }] as Category[];
-    repositoryMock.find.mockResolvedValue(mockCategories);
+  describe("Sad Path", () => {
+    it("should handle error when finding all categories fails", async () => {
+      mockDb.from.mockImplementationOnce(() => {
+        throw new Error("Database error");
+      });
 
-    const result = await categoryAdapter.findAllCategories();
+      await expect(categoryAdapter.findAllCategories()).rejects.toThrow("Database error");
+    });
 
-    expect(repositoryMock.find).toHaveBeenCalled();
-    expect(result).toEqual(mockCategories);
-  });
+    it("should handle error when creating a category fails", async () => {
+      mockDb.returning.mockImplementationOnce(() => {
+        throw new Error("Insert failed");
+      });
 
-  it("should create a category", async () => {
-    const mockCategory = { id: 2, descricao: "Transporte" } as Category;
-    repositoryMock.save.mockResolvedValue(mockCategory);
-
-    const result = await categoryAdapter.createCategory(mockCategory);
-
-    expect(repositoryMock.save).toHaveBeenCalledWith(mockCategory);
-    expect(result).toEqual(mockCategory);
+      await expect(categoryAdapter.createCategory("Test")).rejects.toThrow("Insert failed");
+    });
   });
 });

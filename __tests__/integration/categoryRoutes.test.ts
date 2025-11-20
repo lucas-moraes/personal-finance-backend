@@ -2,7 +2,7 @@ import { Hono } from "hono";
 import request from "supertest";
 import { supabase } from "../../src/infrastructure/database/SupabaseClient";
 
-jest.mock("./../../src/interface/auth/SupabaseClient", () => {
+jest.mock("../../src/infrastructure/database/SupabaseClient", () => {
   return {
     supabase: {
       auth: {
@@ -12,7 +12,7 @@ jest.mock("./../../src/interface/auth/SupabaseClient", () => {
   };
 });
 
-jest.mock("./../../src/infrastructure/adapters/Category.adapter", () => {
+jest.mock("../../src/infrastructure/adapters/Category.adapter", () => {
   return {
     CategoryAdapter: jest.fn().mockImplementation(() => ({
       findAllCategories: jest.fn().mockResolvedValue([

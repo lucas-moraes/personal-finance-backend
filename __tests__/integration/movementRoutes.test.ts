@@ -2,7 +2,7 @@ import { Hono } from "hono";
 import request from "supertest";
 import { supabase } from "../../src/infrastructure/database/SupabaseClient";
 
-jest.mock("./../../src/interface/auth/SupabaseClient", () => {
+jest.mock("../../src/infrastructure/database/SupabaseClient", () => {
   return {
     supabase: {
       auth: {
@@ -12,7 +12,7 @@ jest.mock("./../../src/interface/auth/SupabaseClient", () => {
   };
 });
 
-jest.mock("./../../src/infrastructure/adapters/Movement.adapter", () => {
+jest.mock("../../src/infrastructure/adapters/Movement.adapter", () => {
   return {
     MovementAdapter: jest.fn().mockImplementation(() => ({
       findAllMovements: jest.fn().mockResolvedValue([
