@@ -10,7 +10,7 @@ export class CategoryAdapter implements ICategoryAdapter {
   }
 
   async findAllCategories(): Promise<Array<TCategory>> {
-    const all = await this.categoryRepository.select().from(categories);
+    const all = await this.categoryRepository.select().from(categories).orderBy(categories.descricao);
     return all;
   }
 
