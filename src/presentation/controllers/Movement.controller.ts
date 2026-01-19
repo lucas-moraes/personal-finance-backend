@@ -1,4 +1,5 @@
 import { MovementAdapter } from "../../infrastructure/adapters/Movement.adapter";
+import { SavingsAdapter } from "../../infrastructure/adapters/Savings.adapter";
 import { GetAllMovements } from "../../useCases/movement/GetAllMovements.usecase";
 import { FilterMovements } from "../../useCases/movement/FilterMovements.usecase";
 import { RESPONSE_MESSAGES } from "../constants";
@@ -28,8 +29,9 @@ export class MovementController {
 
   constructor() {
     const movementAdapter = new MovementAdapter();
+    const savingsAdapter = new SavingsAdapter();
     this.getAllMovementsUseCase = new GetAllMovements(movementAdapter);
-    this.filterMovementsUseCase = new FilterMovements(movementAdapter);
+    this.filterMovementsUseCase = new FilterMovements(movementAdapter, savingsAdapter);
     this.filterYearGroupByMonth = new FilterYearGroupByMonth(movementAdapter);
     this.filterYearGroupByCategory = new FilterYearGroupByCategory(movementAdapter);
     this.createMovementsUseCase = new CreateMovement(movementAdapter);
@@ -81,6 +83,7 @@ export class MovementController {
       if (year) query = { ...query, ano: year };
 
       const movements = await this.filterMovementsUseCase.execute(query);
+
       return c.json(movements);
     } catch (error) {
       return c.json({ message: (error as Error).message }, (error as HTTPException).status || 500);

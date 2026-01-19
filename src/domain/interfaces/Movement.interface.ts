@@ -11,6 +11,7 @@ export interface IMovement {
 
 export interface IMovementSummary {
   movements: Array<Omit<IMovement, "categoria"> & { categoriaDescricao: string }>;
+  savings: number;
   total: number;
 }
 

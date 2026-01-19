@@ -6,6 +6,7 @@ import { authRoutes } from "./presentation/routes/Auth.routes";
 import { HTTPException } from "hono/http-exception";
 import { cors } from "hono/cors";
 import { CORS_OPTIONS } from "./presentation/constants";
+import { savingsRoutes } from "./presentation/routes/Savings.routes";
 
 const app = new Hono();
 
@@ -14,6 +15,7 @@ app.use("/*", cors(CORS_OPTIONS));
 app.route("/", authRoutes);
 app.route("/", movementRoutes);
 app.route("/", categoryRoutes);
+app.route("/", savingsRoutes);
 
 app.get("/", (c) => c.json({ message: "hello" }));
 

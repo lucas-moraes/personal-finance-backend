@@ -121,9 +121,9 @@ export class MovementAdapter implements IMovementAdapter {
       .where(eq(movements.id, Number(id)))
       .limit(1);
 
-    return movement.map(m => ({
+    return movement.map((m) => ({
       ...m,
-      valor: parseFloat(m.valor)
+      valor: parseFloat(m.valor),
     }));
   }
 
@@ -177,6 +177,7 @@ export class MovementAdapter implements IMovementAdapter {
 
     return {
       movements: movementSanitized,
+      savings: 0,
       total: movementSummary,
     };
   }
