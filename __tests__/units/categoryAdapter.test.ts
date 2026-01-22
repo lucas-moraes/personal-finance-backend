@@ -5,6 +5,7 @@ jest.mock("../../src/infrastructure/database/DataSource", () => ({
   db: {
     select: jest.fn().mockReturnThis(),
     from: jest.fn().mockReturnThis(),
+    orderBy: jest.fn(),
     insert: jest.fn().mockReturnThis(),
     values: jest.fn().mockReturnThis(),
     returning: jest.fn(),
@@ -28,11 +29,13 @@ describe("CategoryAdapter", () => {
         { id: 1, descricao: "Alimentação" },
         { id: 2, descricao: "Transporte" },
       ];
-      mockDb.from.mockResolvedValue(mockCategories);
+      mockDb.orderBy.mockResolvedValue(mockCategories);
 
       const result = await categoryAdapter.findAllCategories();
 
       expect(mockDb.select).toHaveBeenCalled();
+      expect(mockDb.from).toHaveBeenCalled();
+      expect(mockDb.orderBy).toHaveBeenCalled();
       expect(result).toEqual(mockCategories);
     });
 
@@ -50,7 +53,7 @@ describe("CategoryAdapter", () => {
 
   describe("Sad Path", () => {
     it("should handle error when finding all categories fails", async () => {
-      mockDb.from.mockImplementationOnce(() => {
+      mockDb.orderBy.mockImplementationOnce(() => {
         throw new Error("Database error");
       });
 

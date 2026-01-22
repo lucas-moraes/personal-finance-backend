@@ -1,9 +1,11 @@
 import { FilterMovements } from "../../../../src/useCases/movement/FilterMovements.usecase";
 import type { IMovementAdapter, IMovementSummary, IMovement } from "../../../../src/domain/interfaces/Movement.interface";
+import type { ISavingsAdapter } from "../../../../src/domain/interfaces/Savings.interface";
 
 describe("FilterMovements UseCase", () => {
   let filterMovements: FilterMovements;
   let mockMovementAdapter: jest.Mocked<IMovementAdapter>;
+  let mockSavingsAdapter: jest.Mocked<ISavingsAdapter>;
 
   beforeEach(() => {
     mockMovementAdapter = {
@@ -11,7 +13,6 @@ describe("FilterMovements UseCase", () => {
       findMovementsBy: jest.fn(),
       findMovementById: jest.fn(),
       createMovement: jest.fn(),
-      createMultipleMovements: jest.fn(),
       deleteMovementById: jest.fn(),
       updateMovementById: jest.fn(),
       filterMovementGroupByCategory: jest.fn(),
@@ -19,12 +20,19 @@ describe("FilterMovements UseCase", () => {
       monthsWithMovements: jest.fn(),
       yearsWithMovements: jest.fn(),
     } as jest.Mocked<IMovementAdapter>;
-    filterMovements = new FilterMovements(mockMovementAdapter);
+
+    mockSavingsAdapter = {
+      getValue: jest.fn(),
+      updateValue: jest.fn(),
+      clearValue: jest.fn(),
+    } as jest.Mocked<ISavingsAdapter>;
+
+    filterMovements = new FilterMovements(mockMovementAdapter, mockSavingsAdapter);
   });
 
   describe("Happy Path", () => {
     it("should filter movements by year successfully", async () => {
-      const mockSummary: IMovementSummary = {
+      const mockMovementResult: Omit<IMovementSummary, "savings"> = {
         movements: [
           {
             id: 1,
@@ -39,39 +47,76 @@ describe("FilterMovements UseCase", () => {
         ],
         total: 5000,
       };
-      mockMovementAdapter.findMovementsBy.mockResolvedValue(mockSummary);
+      const mockSavingsValue = { value: 1000 };
+
+      mockMovementAdapter.findMovementsBy.mockResolvedValue(mockMovementResult as IMovementSummary);
+      mockSavingsAdapter.getValue.mockResolvedValue(mockSavingsValue);
 
       const result = await filterMovements.execute({ ano: 2024 });
 
       expect(mockMovementAdapter.findMovementsBy).toHaveBeenCalledWith({ ano: 2024 });
-      expect(result).toEqual(mockSummary);
+      expect(mockSavingsAdapter.getValue).toHaveBeenCalled();
+      expect(result).toEqual({
+        ...mockMovementResult,
+        savings: 1000,
+      });
     });
 
     it("should filter movements by multiple criteria", async () => {
-      const mockSummary: IMovementSummary = {
+      const mockMovementResult: Omit<IMovementSummary, "savings"> = {
         movements: [],
         total: 0,
       };
-      mockMovementAdapter.findMovementsBy.mockResolvedValue(mockSummary);
+      const mockSavingsValue = { value: 500 };
+
+      mockMovementAdapter.findMovementsBy.mockResolvedValue(mockMovementResult as IMovementSummary);
+      mockSavingsAdapter.getValue.mockResolvedValue(mockSavingsValue);
 
       const filters: Partial<IMovement> = { ano: 2024, mes: 6, categoria: 1 };
-      await filterMovements.execute(filters);
+      const result = await filterMovements.execute(filters);
 
       expect(mockMovementAdapter.findMovementsBy).toHaveBeenCalledWith(filters);
+      expect(result).toEqual({
+        ...mockMovementResult,
+        savings: 500,
+      });
+    });
+
+    it("should return savings value of 0 when no savings exist", async () => {
+      const mockMovementResult: Omit<IMovementSummary, "savings"> = {
+        movements: [],
+        total: 0,
+      };
+      const mockSavingsValue = { value: 0 };
+
+      mockMovementAdapter.findMovementsBy.mockResolvedValue(mockMovementResult as IMovementSummary);
+      mockSavingsAdapter.getValue.mockResolvedValue(mockSavingsValue);
+
+      const result = await filterMovements.execute({ ano: 2024 });
+
+      expect(result.savings).toBe(0);
     });
   });
 
   describe("Sad Path", () => {
     it("should handle error when filtering fails", async () => {
+      mockSavingsAdapter.getValue.mockResolvedValue({ value: 0 });
       mockMovementAdapter.findMovementsBy.mockRejectedValue(new Error("Query error"));
 
       await expect(filterMovements.execute({ ano: 2024 })).rejects.toThrow("Query error");
     });
 
     it("should handle database connection error", async () => {
+      mockSavingsAdapter.getValue.mockResolvedValue({ value: 0 });
       mockMovementAdapter.findMovementsBy.mockRejectedValue(new Error("Connection lost"));
 
       await expect(filterMovements.execute({})).rejects.toThrow("Connection lost");
+    });
+
+    it("should handle error when getting savings fails", async () => {
+      mockSavingsAdapter.getValue.mockRejectedValue(new Error("Savings fetch error"));
+
+      await expect(filterMovements.execute({ ano: 2024 })).rejects.toThrow("Savings fetch error");
     });
   });
 });
