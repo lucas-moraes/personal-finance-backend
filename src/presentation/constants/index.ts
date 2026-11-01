@@ -6,6 +6,9 @@ export const RESPONSE_MESSAGES = {
     INVALID_LOGOUT: "Não foi possível realizar o logout",
     INVALID_TOKEN: "Token inválido",
   },
+  HEALTH: {
+    DATABASE_UNAVAILABLE: "Banco de dados indisponível",
+  },
 };
 
 export const CORS_OPTIONS = {
